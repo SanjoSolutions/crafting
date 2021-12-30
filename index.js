@@ -20,11 +20,16 @@ class Ingredient {
 
 let id = 1
 
+function createThing() {
+  const thing = new Thing('I' + id)
+  id++
+  return thing
+}
+
 export function createThings(amount) {
   const things = []
   for (let i = 1; i <= amount; i++) {
-    const thing = new Thing('I' + id)
-    id++
+    const thing = createThing()
     things.push(thing)
   }
   return things
@@ -43,8 +48,7 @@ export function createThingsMadeOutOfThings(
   const thingsMadeOutOfThings = []
   const recipes = []
   for (let i = 1; i <= amount; i++) {
-    const thingMadeOutOfThings = new Thing('I' + id)
-    id++
+    const thingMadeOutOfThings = createThing()
 
     const ingredientsToPickFrom = Array.from(ingredients)
     const recipeIngredients = []
