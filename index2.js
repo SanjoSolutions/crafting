@@ -38,7 +38,7 @@ for (const thing of things) {
   nameToThing.set(thing.name, thing)
 
   const $thing = thingTemplate.content.cloneNode(true)
-  $thing.querySelector('.thing').textContent = thing.name + ` (${ inventory.determineAmount(thing) })`
+  renderThing({ thing }, $thing.querySelector('.thing'))
   thingToNode.set(thing, $thing.querySelector('.thing'))
   $row.appendChild($thing)
 }
@@ -68,11 +68,8 @@ function createThingsMadeOutOfThings2(potentialIngredients) {
     recipes.set(thing.thing, thing.recipe)
 
     const $thing = thingTemplate.content.cloneNode(true)
-    $thing.querySelector('.thing').textContent = thing.thing.name + ` (${ inventory.determineAmount(thing.thing) })`
-    $thing.querySelector('.thing').title =
-      'Ingredients: ' +
-      thing.recipe.ingredients.map(ingredient => `${ ingredient.quantity } x ${ ingredient.thing.name }`)
-        .join(', ')
+    renderThing(thing, $thing.querySelector('.thing'))
+
     thingToNode.set(thing.thing, $thing.querySelector('.thing'))
     $row.appendChild($thing)
   }
@@ -82,12 +79,23 @@ function createThingsMadeOutOfThings2(potentialIngredients) {
   $things.appendChild($row)
 }
 
+function renderThing(thing, $thing) {
+  let html = `<h2 class="thing__name-and-amount">${thing.thing.name} (${ inventory.determineAmount(thing.thing) })</h2>`
+  if (thing.recipe) {
+    html += '<strong>Ingredients:</strong><ul class="thing__ingredients">' +
+      thing.recipe.ingredients.map(ingredient => `<li>${ ingredient.quantity } × ${ ingredient.thing.name }</li>`)
+        .join('') + '</ul>'
+  }
+  $thing.innerHTML = html
+
+}
+
 createThingsMadeOutOfThings2(things)
 
 $things.addEventListener('click', function onClick(event) {
   const { target } = event
-  if (target.classList.contains('thing')) {
-    const $thing = target
+  const $thing = target.closest('.thing')
+  if ($thing) {
     const name = $thing.textContent.split(' ')[0]
     const thing = nameToThing.get(name)
 
@@ -100,7 +108,7 @@ $things.addEventListener('click', function onClick(event) {
           updateThingUI(ingredient.thing)
         }
         inventory.incrementAmount(thing)
-        $thing.textContent = thing.name + ` (${ inventory.determineAmount(thing) })`
+        renderThing({ thing, recipe: recipes.get(thing) }, $thing)
         const row = thingToRow.get(thing)
         if (rows[rows.length - 1] === row && isFirstThingMadeFromRow(row)) {
           createThingsMadeOutOfThings2(things)
@@ -108,7 +116,7 @@ $things.addEventListener('click', function onClick(event) {
       }
     } else {
       inventory.incrementAmount(thing)
-      $thing.textContent = thing.name + ` (${ inventory.determineAmount(thing) })`
+      renderThing({ thing, recipe: recipes.get(thing) }, $thing)
     }
   }
 })
@@ -129,7 +137,7 @@ function removeIngredientsFromInventory(recipe) {
 
 function updateThingUI(thing) {
   const $thing = thingToNode.get(thing)
-  $thing.textContent = thing.name + ` (${ inventory.determineAmount(thing) })`
+  renderThing({ thing, recipe: recipes.get(thing) }, $thing)
 }
 
 function isFirstThingMadeFromRow(row) {

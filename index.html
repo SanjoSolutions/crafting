@@ -15,14 +15,28 @@
 
       .thing {
         display: inline-flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         border: 1px solid black;
-        padding: 0.25rem;
-        width: 4rem;
-        height: 4rem;
+        padding: 0.5rem;
         cursor: pointer;
         user-select: none;
+      }
+
+      .thing__name-and-amount {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
+
+      .thing__ingredients {
+        margin-top: 0.25rem;
+        margin-bottom: 0;
+        padding-left: 0;
+      }
+
+      .mb-0 {
+        margin-bottom: 0;
       }
     </style>
   </head>
