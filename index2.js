@@ -42,14 +42,14 @@ for (const thing of things) {
   thingToNode.set(thing, $thing.querySelector('.thing'))
   $row.appendChild($thing)
 }
-const row = things
+const row = Array.from(things)
 rows.push(row)
 row.map(thing => thingToRow.set(thing, row))
 $things.appendChild($row)
 
-function createThingsMadeOutOfThings2(things) {
+function createThingsMadeOutOfThings2(potentialIngredients) {
   const thingsMadeOutOfThings = createThingsMadeOutOfThings(
-    things,
+    potentialIngredients,
     3,
     {
       minimumIngredients: 2,
@@ -63,6 +63,7 @@ function createThingsMadeOutOfThings2(things) {
   $row.className = 'row'
 
   for (const thing of thingsMadeOutOfThings) {
+    things.push(thing.thing)
     nameToThing.set(thing.thing.name, thing.thing)
     recipes.set(thing.thing, thing.recipe)
 
@@ -102,7 +103,7 @@ $things.addEventListener('click', function onClick(event) {
         $thing.textContent = thing.name + ` (${ inventory.determineAmount(thing) })`
         const row = thingToRow.get(thing)
         if (rows[rows.length - 1] === row && isFirstThingMadeFromRow(row)) {
-          createThingsMadeOutOfThings2(row)
+          createThingsMadeOutOfThings2(things)
         }
       }
     } else {
